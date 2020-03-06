@@ -1,0 +1,312 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #09101a;
+    font-family: "Roboto";
+    overflow: hidden;
+  }
+  
+  input:focus,
+  button:focus {
+    outline: none;
+  }
+
+  hr {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #6c7883;
+  }
+  
+  .container {
+    max-width: 1170px;
+    margin: 0 auto;
+  }
+
+  .login-overlay {
+    background-color: #09101a;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+  }
+
+  .no-margin {
+    margin: 0 !important;
+  }
+  
+  #auth {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 520px;
+    background-color: #17212b;
+    vertical-align: middle;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .auth__title {
+    font-size: 24px;
+    margin: 0;
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  .auth__subtitle {
+    margin-top: 0;
+    color: #7f91a4;
+    font-size: 16px;
+  }
+  .auth__form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .auth__form input {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #465362;
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: all 0.3s;
+    color: white;
+  }
+  .auth__form input:focus {
+    border-bottom: 1px solid #5288c1;
+  }
+  .auth__form__login {
+    display: block;
+    margin-top: 20px;
+    width: 130px;
+    background-color: #5288c1;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+  .auth__form__login:hover {
+    cursor: pointer;
+  }
+  
+  #chat {
+    display: flex;
+    color: white;
+  }
+  
+  .left-panel {
+    height: 100vh;
+    width: 30%;
+    background-color: #17212b;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #09101a;
+    padding: 10px;
+  }
+  .left-panel__header {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .left-panel__header__menu {
+    margin-right: 10px;
+    height: 30px;
+  }
+  .left-panel__header__menu span {
+    display: block;
+    position: relative;
+    top: 50%;
+    height: 2px;
+    background-color: #6c7883;
+    width: 20px;
+  }
+  .left-panel__header__menu span:before {
+    content: "";
+    height: 2px;
+    width: 20px;
+    background-color: #6c7883;
+    position: absolute;
+    bottom: 6px;
+  }
+  .left-panel__header__menu span:after {
+    content: "";
+    height: 2px;
+    width: 20px;
+    background-color: #6c7883;
+    position: absolute;
+    top: 6px;
+  }
+  .left-panel__header__menu span:hover {
+    cursor: pointer;
+  }
+  .left-panel__header__search {
+    width: 100%;
+  }
+  .left-panel__header__search input {
+    padding: 10px;
+    width: 100%;
+    background-color: #242f3d;
+    border: none;
+    border-radius: 5px;
+    color: white;
+  }
+  .left-panel .users-list {
+    color: white;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .user-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+  .user-item__img {
+    border-radius: 50%;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    display: inline-block;
+    margin-right: 10px;
+  }
+  .user-item__img img {
+    width: 100%;
+  }
+  .user-item__info {
+    display: inline-block;
+  }
+  .user-item__info__username {
+    font-size: 14px;
+    font-weight: normal;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+  .user-item__info__nickname {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+    color: #7f91a4;
+  }
+  
+  .messages {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-width: 40%;
+  }
+  .messages__item {
+    background-color: #182533;
+    padding: 10px 45px 10px 20px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    font-size: 14px;
+    position: relative;
+  }
+  .messages__item__time {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 12px;
+    color: #7a8b9e;
+  }
+  
+  .small-avatar {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .chat-box {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-box__header {
+    width: 100%;
+    padding: 10px;
+    background-color: #17212b;
+  }
+  .chat-box__header__title {
+    font-size: 14px;
+  }
+  .chat-box__header__members-count {
+    color: #7f91a4;
+    font-size: 14px;
+  }
+  .chat-box__body {
+    flex: 1 0 auto;
+    overflow: auto;
+  }
+  .chat-box__footer form {
+    background-color: #17212b;
+    padding: 10px;
+    display: flex;
+  }
+  .chat-box__footer input {
+    flex: 1 0 auto;
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 14px;
+  }
+  .chat-box__footer button {
+    flex: 0 0 115px;
+    padding: 0;
+    background-color: #5288c1;
+    border: none;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .chat-list {
+    margin: 20px 0 0 10px;
+    padding: 0;
+    /* height: 100%;
+    overflow: auto; */
+  }
+  .chat-list__from-user {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .chat-list__from-user .user-item__img {
+    margin-left: 10px;
+  }
+  .chat-list__from-user .messages__item:nth-child(1)::before {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: 0;
+    border: 10px solid transparent;
+    border-left: 10px solid #182533;
+    border-bottom: 10px solid #182533;
+  }
+  .chat-list__from-other {
+    display: flex;
+  }
+  .chat-list__from-other .messages__item:nth-child(1)::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    bottom: 0;
+    border: 10px solid transparent;
+    border-right: 10px solid #182533;
+    border-bottom: 10px solid #182533;
+  }

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://localhost:3000/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"></script>
+</head>
+
+<body>
+
+    <div class="login-overlay">
+        <div class="container">
+            <div id="auth">
+                <div class="auth__img">
+                    <img src="img/auth/auth.png" alt="auth">
+                </div>
+                <h4 class="auth__title">Авторизация</h4>
+                <p class="auth__subtitle">Введите имя и ник для дальнейшей авторизации</p>
+                <form action="#" id="auth__form" class="auth__form">
+                    <input id="auth__form__name" class="auth__form__name" type="text" placeholder="Введите свое имя">
+                    <input id="auth__form__nickname" class="auth__form__nickname" type="text" placeholder="Введите свой ник">
+                    <button type="submit" id="auth__form__login" class="auth__form__login">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat">
+        <div id="left-panel" class="left-panel">
+            <div class="left-panel__header">
+                <div class="left-panel__header__menu">
+                    <span></span>
+                </div>
+                <div class="left-panel__header__search">
+                    <input type="text" placeholder="Найти...">
+                </div>
+            </div>
+            <div id="active-user" class="users-list__item user-item no-margin">
+                <div class="user-item__img">
+                    <img src="img/noavatar.jpg" alt="user avatar">
+                </div>
+                <div class="user-item__info">
+                    <p class="user-item__info__username"></p>
+                    <p class="user-item__info__nickname"></p>
+                </div>
+            </div>
+            <hr>
+            <ul class="users-list"></ul>
+        </div>
+        <div id="chat-box" class="chat-box">
+            <div class="chat-box__header">
+                <div class="chat-box__header__title">
+                    Чат
+                </div>
+                <div class="chat-box__header__members-count">
+                    2 участника
+                </div>
+            </div>
+            <div class="chat-box__body">
+                <ul class="chat-list"></ul>
+            </div>
+            <div class="chat-box__footer">
+                <form action="#" id="message-form">
+                    <input id="message-input" type="text" placeholder="Введите сообщение...">
+                    <button type="submit" id="message-send-btn">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script id="message-from-other-template" type="text/x-handlebars-template">
+        <li class="chat-list__from-other">
+            <div class="user-item__img small-avatar"><img src="img/noavatar.jpg" alt="#"></div>
+            <div class="messages">
+                <div class="messages__item">
+                    {{ message }}
+                    <span class="messages__item__time">
+                       {{ time }}
+                    </span>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <script id="message-from-user-template" type="text/x-handlebars-template">
+        <li class="chat-list__from-user user-item">
+            <div class="user-item__img small-avatar"><img src="img/noavatar.jpg" alt="#"></div>
+            <div class="messages">
+                <div class="messages__item">
+                    {{ message }}
+                    <span class="messages__item__time">
+                        {{ time }}
+                    </span>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <script id="message-template" type="text/x-handlebars-template">
+        <div class="messages__item">
+            {{ message }}
+            <span class="messages__item__time">
+                {{ time }}
+            </span>
+        </div>
+    </script>
+
+    <script id="user-template" type="text/x-handlebars-template">
+        {{#each this}}
+        <li class="users-list__item user-item">
+            <div class="user-item__img">
+                <img src="img/noavatar.jpg" alt="user avatar">
+            </div>
+            <div class="user-item__info">
+                <p class="user-item__info__username">{{ this.username }}</p>
+                <p class="user-item__info__nickname">{{ this.nickname }}</p>
+            </div>
+        </li>
+        {{/each}}
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="main.js"></script>
+
+</body>
+
+</html>
