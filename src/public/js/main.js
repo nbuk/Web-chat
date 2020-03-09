@@ -1,6 +1,7 @@
 window.onload = () => {
 
     const socket = io();
+    let lastMessageUsername;
 
     const loginOverlay = document.querySelector('.login-overlay'),
         loginNameInput = loginOverlay.querySelector('#auth__form__name'),
@@ -12,9 +13,7 @@ window.onload = () => {
         login();
     })
 
-
     const messageInput = document.querySelector('#message-input'),
-        sendBtn = document.querySelector('#message-send-btn'),
         messageForm = document.querySelector('#message-form'),
         chatBody = document.querySelector('.chat-box__body'),
         chatList = document.querySelector('.chat-list'),
@@ -26,10 +25,26 @@ window.onload = () => {
         messageSource = document.querySelector('#message-template').innerHTML,
         messageTemplate = Handlebars.compile(messageSource),
         usersSource = document.querySelector('#user-template').innerHTML,
-        usersTemplate = Handlebars.compile(usersSource);
+        usersTemplate = Handlebars.compile(usersSource),
+        addAvatarOverlay = document.querySelector('.add-avatar-overlay'),
+        menuNode = document.querySelector('#menu'),
+        photoInput = document.querySelector('#photoInput'),
+        activeUserAvatar = document.querySelector('#active-user-avatar');
+    
+    const fileReader = new FileReader();
 
     socket.on('new message', data => {
-        const renderData = { message: data.message, time: getTimeFromTimestamp(data.messageTimestamp) };
+        const renderData = { 
+            message: data.message, 
+            time: getTimeFromTimestamp(data.messageTimestamp), 
+            username: data.username 
+        };
+
+        if (lastMessageUsername !== data.username) {
+            createMessageFromOtherNode(renderData);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return;
+        }
 
         if (chatList.children.length) {
             if (chatList.lastElementChild.classList.contains('chat-list__from-other')) {
@@ -47,25 +62,16 @@ window.onload = () => {
         chatBody.scrollTop = chatBody.scrollHeight;
     });
 
-    socket.on('new user logged in', data => {
-        const { users } = data;
-        const html = usersTemplate(users);
-        console.log(users);
-        const membersCountNode = document.querySelector('.chat-box__header__members-count');
-        membersCountNode.textContent = users.length + ' участника(ов)';
+    socket.on('new user joined', data => {
+        renderActiveUsers(data);
+    })
 
-        usersList.innerHTML = html;
+    socket.on('login', data => {
+        renderActiveUsers(data);
     })
 
     socket.on('user disconnected', data => {
-        console.log('user disconnected')
-        const { users } = data;
-        const html = usersTemplate(users);
-        console.log(users);
-        const membersCountNode = document.querySelector('.chat-box__header__members-count');
-        membersCountNode.textContent = users.length + ' участника(ов)';
-
-        usersList.innerHTML = html;
+        renderActiveUsers(data);
     })
 
     messageForm.addEventListener('submit', e => {
@@ -104,10 +110,45 @@ window.onload = () => {
         return false;
     });
 
+    menuNode.addEventListener('click', () => {
+        addAvatarOverlay.style.display = 'block';
+        addAvatarOverlay.style.zIndex = 1;
+    })
+
+    addAvatarOverlay.addEventListener('click', e => {
+        if (e.target === addAvatarOverlay) {
+            addAvatarOverlay.style.display = 'none';
+            addAvatarOverlay.style.zIndex = -5;
+        }
+    })
+
+    fileReader.addEventListener('load', () => {
+        activeUserAvatar.src = fileReader.result;
+    })
+
+    photoInput.addEventListener('change', e => {
+        const [file] = e.target.files;
+
+        if (file) {
+            fileReader.readAsDataURL(file);
+        }
+    })
+
+    function renderActiveUsers(data) {
+        const { users } = data;
+        const html = usersTemplate(users);
+        const membersCountNode = document.querySelector('.chat-box__header__members-count');
+        membersCountNode.textContent = users.length + ' участника(ов)';
+
+        usersList.innerHTML = html;
+    }
+
     function createMessageFromOtherNode(renderData) {
         const html = messageFromOtherTemplate(renderData);
 
         chatList.insertAdjacentHTML('beforeend', html);
+
+        lastMessageUsername = renderData.username;
     }
 
     function createMessageFromUserNode(renderData) {
@@ -120,7 +161,7 @@ window.onload = () => {
         if (loginNameInput.value && nicknameInput.value) {
             socket.emit('new user logged in', { 
                 username: loginNameInput.value, 
-                nickname: nicknameInput.value 
+                nickname: nicknameInput.value
             })
             loginOverlay.style.zIndex = -1;
             loginOverlay.style.display = 'none';
@@ -132,15 +173,25 @@ window.onload = () => {
 
             const chatHeaderHeight = document.querySelector('.chat-box__header').clientHeight,
                 chatFooterHeight = document.querySelector('.chat-box__footer').clientHeight,
-                chatBodyHeight = document.body.clientHeight - chatHeaderHeight - chatFooterHeight + 'px';
+                chatBodyHeight = document.body.clientHeight - chatHeaderHeight - chatFooterHeight - 15 + 'px';
             
             chatBody.style.height = chatBodyHeight;
         }
     }
 
     function getTimeFromTimestamp(timestamp) {
-        const date = new Date(timestamp);
+        let date = new Date(timestamp),
+            hours = date.getHours(),
+            minutes = date.getMinutes();
+        
+        if (hours.toString().length < 2) {
+            hours = '0' + hours;
+        }
 
-        return `${date.getHours()}:${date.getMinutes()}`;
+        if (minutes.toString().length < 2) {
+            minutes = '0' + minutes;
+        }
+
+        return `${hours}:${minutes}`;
     }
 };

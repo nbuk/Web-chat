@@ -24,28 +24,25 @@ app.get('/img/auth/auth.png', function(req, res) {
 
 ///////////////////////
 
-let usersCount = 0;
-
 const users = [];
 
 io.on('connection', function(socket) {
     console.log('a user connected');
-
     
     socket.on('new user logged in', data => {
-        
-        const { username, nickname } = data;
-        const newUser = { username, nickname }
+
+        const { username } = data;
 
         socket.username = username;
-        users.push(newUser);
-        console.log(`Users on connect: ${users}`)
-        socket.broadcast.emit('new user logged in', { users })
+        users.push(data);
+        socket.emit('login', { users })
+        socket.broadcast.emit('new user joined', { users })
     })
 
     socket.on('new message', data => {
-        console.log(`New message: ${data.message}, timestamp: ${data.messageTimestamp}`);
-        socket.broadcast.emit('new message', data);
+        const messageData = {...data, username: socket.username}
+
+        socket.broadcast.emit('new message', messageData);
     })
     
     socket.on('disconnect', function() {
@@ -58,12 +55,7 @@ io.on('connection', function(socket) {
             }
         }
 
-        for (let user of users) {
-            console.log(`User in users: ${user.username}`);
-        }
-
         socket.broadcast.emit('user disconnected', { users })
-
     });
 
     

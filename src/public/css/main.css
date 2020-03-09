@@ -299,7 +299,9 @@
     border-bottom: 10px solid #182533;
   }
   .chat-list__from-other {
+    position: relative;
     display: flex;
+    margin-bottom: 20px;
   }
   .chat-list__from-other .messages__item:nth-child(1)::before {
     content: "";
@@ -310,3 +312,42 @@
     border-right: 10px solid #182533;
     border-bottom: 10px solid #182533;
   }
+.username {
+  display: inline-block;
+  position: absolute;
+  top: -15px;
+  left: 50px;
+  margin: 0;
+  font-size: 12px;
+  color: #7f91a4;
+}
+
+.add-avatar-overlay {
+  display: none;
+  z-index: -5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, .8);
+}
+
+.add-avatar {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  background-color: #17212b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.add-avatar h5 {
+  color: white;
+  display: block;
+}

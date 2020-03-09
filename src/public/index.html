@@ -28,11 +28,20 @@
         </div>
     </div>
 
+    <div class="add-avatar-overlay">
+        <div class="container">
+            <div class="add-avatar">
+                <h5>Загрузить фото</h5>
+                <input type="file" id="photoInput">
+            </div>
+        </div>
+    </div>
+
     <div id="chat">
         <div id="left-panel" class="left-panel">
             <div class="left-panel__header">
                 <div class="left-panel__header__menu">
-                    <span></span>
+                    <span id="menu"></span>
                 </div>
                 <div class="left-panel__header__search">
                     <input type="text" placeholder="Найти...">
@@ -40,7 +49,7 @@
             </div>
             <div id="active-user" class="users-list__item user-item no-margin">
                 <div class="user-item__img">
-                    <img src="img/noavatar.jpg" alt="user avatar">
+                    <img id="active-user-avatar" src="img/noavatar.jpg" alt="user avatar">
                 </div>
                 <div class="user-item__info">
                     <p class="user-item__info__username"></p>
@@ -52,12 +61,8 @@
         </div>
         <div id="chat-box" class="chat-box">
             <div class="chat-box__header">
-                <div class="chat-box__header__title">
-                    Чат
-                </div>
-                <div class="chat-box__header__members-count">
-                    2 участника
-                </div>
+                <div class="chat-box__header__title">Чат</div>
+                <div class="chat-box__header__members-count"></div>
             </div>
             <div class="chat-box__body">
                 <ul class="chat-list"></ul>
@@ -74,6 +79,7 @@
     <script id="message-from-other-template" type="text/x-handlebars-template">
         <li class="chat-list__from-other">
             <div class="user-item__img small-avatar"><img src="img/noavatar.jpg" alt="#"></div>
+            <p class="username">{{ username }}</p>
             <div class="messages">
                 <div class="messages__item">
                     {{ message }}
