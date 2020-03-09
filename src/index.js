@@ -31,16 +31,27 @@ io.on('connection', function(socket) {
     
     socket.on('new user logged in', data => {
 
-        const { username } = data;
-
-        socket.username = username;
-        users.push(data);
+        socket.username = data.username;
+        socket.avatar = 'img/noavatar.jpg';
+        users.push({...data, id: socket.id, avatar: socket.avatar});
         socket.emit('login', { users })
         socket.broadcast.emit('new user joined', { users })
     })
 
+    socket.on('new photo', data => {
+        users.forEach(user => {
+            if (user.id === socket.id) {
+                socket.avatar = data;
+                user.avatar = data;
+                socket.emit('update users', {users});
+                socket.broadcast.emit('user update photo', { users });
+            }
+        })
+
+    })
+
     socket.on('new message', data => {
-        const messageData = {...data, username: socket.username}
+        const messageData = {...data, username: socket.username, avatar: socket.avatar}
 
         socket.broadcast.emit('new message', messageData);
     })
@@ -55,7 +66,7 @@ io.on('connection', function(socket) {
             }
         }
 
-        socket.broadcast.emit('user disconnected', { users })
+        socket.broadcast.emit('update users', { users })
     });
 
     

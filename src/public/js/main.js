@@ -30,14 +30,13 @@ window.onload = () => {
         menuNode = document.querySelector('#menu'),
         photoInput = document.querySelector('#photoInput'),
         activeUserAvatar = document.querySelector('#active-user-avatar');
-    
-    const fileReader = new FileReader();
 
     socket.on('new message', data => {
         const renderData = { 
             message: data.message, 
             time: getTimeFromTimestamp(data.messageTimestamp), 
-            username: data.username 
+            username: data.username,
+            avatar: data.avatar
         };
 
         if (lastMessageUsername !== data.username) {
@@ -62,6 +61,10 @@ window.onload = () => {
         chatBody.scrollTop = chatBody.scrollHeight;
     });
 
+    socket.on('update users', data => {
+        renderActiveUsers(data);
+    })
+
     socket.on('new user joined', data => {
         renderActiveUsers(data);
     })
@@ -70,7 +73,7 @@ window.onload = () => {
         renderActiveUsers(data);
     })
 
-    socket.on('user disconnected', data => {
+    socket.on('user update photo', data => {
         renderActiveUsers(data);
     })
 
@@ -87,7 +90,7 @@ window.onload = () => {
         if (messageInput.value) {
             socket.emit('new message', messageData);
 
-            const renderData = { message: messageInput.value, time: getTimeFromTimestamp(timestamp) };
+            const renderData = { message: messageInput.value, time: getTimeFromTimestamp(timestamp), avatar: activeUserAvatar.src };
 
             if (chatList.children.length) {
                 if (chatList.lastElementChild.classList.contains('chat-list__from-user')) {
@@ -122,12 +125,19 @@ window.onload = () => {
         }
     })
 
-    fileReader.addEventListener('load', () => {
-        activeUserAvatar.src = fileReader.result;
-    })
-
     photoInput.addEventListener('change', e => {
         const [file] = e.target.files;
+
+        const fileReader = new FileReader();
+
+        fileReader.addEventListener('load', () => {
+            activeUserAvatar.src = fileReader.result;
+
+            socket.emit('new photo', fileReader.result);
+
+            addAvatarOverlay.style.display = 'none';
+            addAvatarOverlay.style.zIndex = -5;
+        })
 
         if (file) {
             fileReader.readAsDataURL(file);
@@ -158,7 +168,10 @@ window.onload = () => {
     }
 
     function login() {
-        if (loginNameInput.value && nicknameInput.value) {
+        const username = loginNameInput.value.replace(/[\s]+/g, '');
+        const nickname = nicknameInput.value.replace(/[\s]+/g, '');
+
+        if (username && nickname) {
             socket.emit('new user logged in', { 
                 username: loginNameInput.value, 
                 nickname: nicknameInput.value
@@ -176,6 +189,8 @@ window.onload = () => {
                 chatBodyHeight = document.body.clientHeight - chatHeaderHeight - chatFooterHeight - 15 + 'px';
             
             chatBody.style.height = chatBodyHeight;
+        } else {
+            alert('Необходимо заполнить поле с именем и ником')
         }
     }
 

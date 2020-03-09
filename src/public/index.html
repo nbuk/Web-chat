@@ -78,7 +78,7 @@
 
     <script id="message-from-other-template" type="text/x-handlebars-template">
         <li class="chat-list__from-other">
-            <div class="user-item__img small-avatar"><img src="img/noavatar.jpg" alt="#"></div>
+            <div class="user-item__img small-avatar"><img src="{{avatar}}" alt="#"></div>
             <p class="username">{{ username }}</p>
             <div class="messages">
                 <div class="messages__item">
@@ -93,7 +93,7 @@
 
     <script id="message-from-user-template" type="text/x-handlebars-template">
         <li class="chat-list__from-user user-item">
-            <div class="user-item__img small-avatar"><img src="img/noavatar.jpg" alt="#"></div>
+            <div class="user-item__img small-avatar"><img src="{{avatar}}" alt="#"></div>
             <div class="messages">
                 <div class="messages__item">
                     {{ message }}
@@ -118,7 +118,7 @@
         {{#each this}}
         <li class="users-list__item user-item">
             <div class="user-item__img">
-                <img src="img/noavatar.jpg" alt="user avatar">
+                <img src="{{this.avatar}}" alt="user avatar">
             </div>
             <div class="user-item__info">
                 <p class="user-item__info__username">{{ this.username }}</p>
