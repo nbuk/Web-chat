@@ -1,7 +1,12 @@
+import MessagesConrtoller from './MessagesContoller.js';
+import UsersController from './UsersController.js';
+
 window.onload = () => {
 
+    const messageController = new MessagesConrtoller();
+    const usersController = new UsersController();
+
     const socket = io();
-    let lastMessageUsername;
 
     const loginOverlay = document.querySelector('.login-overlay'),
         loginNameInput = loginOverlay.querySelector('#auth__form__name'),
@@ -16,65 +21,37 @@ window.onload = () => {
     const messageInput = document.querySelector('#message-input'),
         messageForm = document.querySelector('#message-form'),
         chatBody = document.querySelector('.chat-box__body'),
-        chatList = document.querySelector('.chat-list'),
-        usersList = document.querySelector('.users-list'),
-        messageFromOtherSource = document.querySelector('#message-from-other-template').innerHTML,
-        messageFromOtherTemplate = Handlebars.compile(messageFromOtherSource),
-        messageFromUserSource = document.querySelector('#message-from-user-template').innerHTML,
-        messageFromUserTemplate = Handlebars.compile(messageFromUserSource),
-        messageSource = document.querySelector('#message-template').innerHTML,
-        messageTemplate = Handlebars.compile(messageSource),
-        usersSource = document.querySelector('#user-template').innerHTML,
-        usersTemplate = Handlebars.compile(usersSource),
         addAvatarOverlay = document.querySelector('.add-avatar-overlay'),
         menuNode = document.querySelector('#menu'),
         photoInput = document.querySelector('#photoInput'),
         activeUserAvatar = document.querySelector('#active-user-avatar');
 
     socket.on('new message', data => {
-        const renderData = { 
+        const renderData = {
+            type: 'from other',
             message: data.message, 
             time: getTimeFromTimestamp(data.messageTimestamp), 
             username: data.username,
             avatar: data.avatar
         };
 
-        if (lastMessageUsername !== data.username) {
-            createMessageFromOtherNode(renderData);
-            chatBody.scrollTop = chatBody.scrollHeight;
-            return;
-        }
-
-        if (chatList.children.length) {
-            if (chatList.lastElementChild.classList.contains('chat-list__from-other')) {
-                const html = messageTemplate(renderData);
-                const messagesDiv = chatList.lastElementChild.querySelector('.messages');
-
-                messagesDiv.insertAdjacentHTML('beforeend', html);
-            } else {
-                createMessageFromOtherNode(renderData);
-            }
-        } else {
-            createMessageFromOtherNode(renderData);
-        }
-
-        chatBody.scrollTop = chatBody.scrollHeight;
+        messageController.createMessage(renderData);
     });
 
     socket.on('update users', data => {
-        renderActiveUsers(data);
+        usersController.renderActiveUsers(data);
     })
 
     socket.on('new user joined', data => {
-        renderActiveUsers(data);
+        usersController.renderActiveUsers(data);
     })
 
     socket.on('login', data => {
-        renderActiveUsers(data);
+        usersController.renderActiveUsers(data);
     })
 
     socket.on('user update photo', data => {
-        renderActiveUsers(data);
+        usersController.renderActiveUsers(data);
     })
 
     messageForm.addEventListener('submit', e => {
@@ -90,25 +67,17 @@ window.onload = () => {
         if (messageInput.value) {
             socket.emit('new message', messageData);
 
-            const renderData = { message: messageInput.value, time: getTimeFromTimestamp(timestamp), avatar: activeUserAvatar.src };
+            const renderData = {
+                type: 'from user', 
+                message: messageInput.value, 
+                time: getTimeFromTimestamp(timestamp), 
+                avatar: activeUserAvatar.src 
+            };
 
-            if (chatList.children.length) {
-                if (chatList.lastElementChild.classList.contains('chat-list__from-user')) {
-                    const html = messageTemplate(renderData);
-                    const messagesDiv = chatList.lastElementChild.querySelector('.messages');
-    
-                    messagesDiv.insertAdjacentHTML('beforeend', html);
-                } else {
-                    createMessageFromUserNode(renderData);
-                }
-            } else {
-                createMessageFromUserNode(renderData);
-            }
+            messageController.createMessage(renderData);
 
             messageInput.value = '';
         }
-
-        chatBody.scrollTop = chatBody.scrollHeight;
 
         return false;
     });
@@ -143,29 +112,6 @@ window.onload = () => {
             fileReader.readAsDataURL(file);
         }
     })
-
-    function renderActiveUsers(data) {
-        const { users } = data;
-        const html = usersTemplate(users);
-        const membersCountNode = document.querySelector('.chat-box__header__members-count');
-        membersCountNode.textContent = users.length + ' участника(ов)';
-
-        usersList.innerHTML = html;
-    }
-
-    function createMessageFromOtherNode(renderData) {
-        const html = messageFromOtherTemplate(renderData);
-
-        chatList.insertAdjacentHTML('beforeend', html);
-
-        lastMessageUsername = renderData.username;
-    }
-
-    function createMessageFromUserNode(renderData) {
-        const html = messageFromUserTemplate(renderData);
-
-        chatList.insertAdjacentHTML('beforeend', html);
-    }
 
     function login() {
         const username = loginNameInput.value.replace(/[\s]+/g, '');

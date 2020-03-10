@@ -10,6 +10,14 @@ app.get('/main.js', function(req, res) {
     res.sendFile(__dirname + '/public/js/main.js');
 });
 
+app.get('/MessagesContoller.js', function(req, res) {
+    res.sendFile(__dirname + '/public/js/MessagesContoller.js');
+});
+
+app.get('/UsersController.js', function(req, res) {
+    res.sendFile(__dirname + '/public/js/UsersController.js');
+});
+
 app.get('/main.css', function(req, res) {
     res.sendFile(__dirname + '/public/css/main.css');
 });
