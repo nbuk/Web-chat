@@ -67,6 +67,8 @@ export default class MessageController {
                 const messageSource = document.querySelector('#message-template').innerHTML;
 
                 return Handlebars.compile(messageSource);
+            default:
+                throw new Error('Указан неверный тип');
         }
     }
 
