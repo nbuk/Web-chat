@@ -1,48 +1,47 @@
 export default class MessageController {
-    
-    constructor() {
-        this._messageFromOtherRender = this._getTemplate('fromOther');
-        this._messageFromUserRender = this._getTemplate('fromUser');
-        this._messageRender = this._getTemplate('message');
-        this._chatBody = document.querySelector('.chat-box__body');
-        this._chatList = document.querySelector('.chat-list');
-        this._lastMessageUsername;
-    }
 
+    static chatList = document.querySelector('.chat-list');
+    static chatBody = document.querySelector('.chat-box__body');
+    static lastMessageUsername;
+
+    /**
+     * Рендерит сообщение на экран
+     *
+     * @param {object} renderData renderData - обязательный параметр (объект с сообщением).
+    */
     createMessage(renderData) {
-
         if (renderData.type === 'from user') {
-            if (this._chatList.children.length) {
-                if (this._chatList.lastElementChild.classList.contains('chat-list__from-user')) {
-                    this._insertMessageNode(renderData);
+            if (MessageController.chatList.children.length) {
+                if (MessageController.chatList.lastElementChild.classList.contains('chat-list__from-user')) {
+                    MessageController.insertMessageNode(renderData);
                 } else {
-                    this._insertMessageFromUserNode(renderData)
+                    MessageController.insertMessageFromUserNode(renderData)
                 }
             } else {
-                this._insertMessageFromUserNode(renderData)
+                MessageController.insertMessageFromUserNode(renderData)
             }
 
             return;
         }
 
-        if (this._lastMessageUsername !== renderData.username) {
-            this._insertMessageFromOtherNode(renderData);
-            this._chatBody.scrollTop = this._chatBody.scrollHeight;
+        if (MessageController.lastMessageUsername !== renderData.username) {
+            MessageController.insertMessageFromOtherNode(renderData);
+            MessageController.chatBody.scrollTop = MessageController.chatBody.scrollHeight;
             
             return;
         }
 
-        if (this._chatList.children.length) {
-            if (this._chatList.lastElementChild.classList.contains('chat-list__from-other')) {
-                this._insertMessageNode(renderData);
+        if (MessageController.chatList.children.length) {
+            if (MessageController.chatList.lastElementChild.classList.contains('chat-list__from-other')) {
+                MessageController.insertMessageNode(renderData);
             } else {
-                this._insertMessageFromOtherNode(renderData);
+                MessageController.insertMessageFromOtherNode(renderData);
             }
         } else {
-            this._insertMessageFromOtherNode(renderData);
+            MessageController.insertMessageFromOtherNode(renderData);
         }
 
-        this._chatBody.scrollTop = this._chatBody.scrollHeight;
+        MessageController.chatBody.scrollTop = MessageController.chatBody.scrollHeight;
     }
 
     /**
@@ -50,7 +49,7 @@ export default class MessageController {
      *
      * @param {string} type тип шаблона (fromOther, fromUser, message)
     */
-    _getTemplate(type) {
+    static getTemplateRender(type) {
         if (!type) {
             throw new Error('Не указан тип шаблона');
         }
@@ -58,33 +57,39 @@ export default class MessageController {
         switch (type) {
             case 'fromOther':
                 const messageFromOtherSource = document.querySelector('#message-from-other-template').innerHTML;
+
                 return Handlebars.compile(messageFromOtherSource);
             case 'fromUser':
                 const messageFromUserSource = document.querySelector('#message-from-user-template').innerHTML;
+
                 return Handlebars.compile(messageFromUserSource);
             case 'message':
                 const messageSource = document.querySelector('#message-template').innerHTML;
+
                 return Handlebars.compile(messageSource);
         }
     }
 
-    _insertMessageFromOtherNode(renderData) {
-        const html = this._messageFromOtherRender(renderData);
+    static insertMessageFromOtherNode(renderData) {
+        const render = MessageController.getTemplateRender('fromOther');
+        const html = render(renderData);
 
-        this._chatList.insertAdjacentHTML('beforeend', html);
+        MessageController.chatList.insertAdjacentHTML('beforeend', html);
 
-        this._lastMessageUsername = renderData.username;
+        MessageController.lastMessageUsername = renderData.username;
     }
 
-    _insertMessageFromUserNode(renderData) {
-        const html = this._messageFromUserRender(renderData);
+    static insertMessageFromUserNode(renderData) {
+        const render = MessageController.getTemplateRender('fromUser');
+        const html = render(renderData);
 
-        this._chatList.insertAdjacentHTML('beforeend', html);
+        MessageController.chatList.insertAdjacentHTML('beforeend', html);
     }
 
-    _insertMessageNode(renderData) {
-        const html = this._messageRender(renderData);
-        const messagesDiv = this._chatList.lastElementChild.querySelector('.messages');
+    static insertMessageNode(renderData) {
+        const render = MessageController.getTemplateRender('message');
+        const html = render(renderData);
+        const messagesDiv = MessageController.chatList.lastElementChild.querySelector('.messages');
 
         messagesDiv.insertAdjacentHTML('beforeend', html);
     }
