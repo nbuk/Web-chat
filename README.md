@@ -1,4 +1,15 @@
-## Web chat
+# Web chat
+
+![alt text](screenshots/main.png "Web Chat")
+
+### Описание
+
+Простой веб-чат. Есть возможность смены аватарки. </br>
+
+### Зависимости
+
+* `express`
+* `socket.io`
 
 ### Доступные команды
 
